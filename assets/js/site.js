@@ -227,7 +227,7 @@ const MLP = (() => {
         </div>
         <div class="positioning-close">
           <blockquote>The purpose of the distinction is not to be first.<br>The purpose is to be precise.</blockquote>
-          <p><a href="/positioning/">Read the research &amp; positioning summary →</a></p>
+          <p><a href="/positioning/">Read the research &amp; positioning summary →</a><br><a href="/research/prior-art/">Read the full Prior-Art &amp; Positioning Note →</a></p>
         </div>
       </div>`;
     partners.before(section);

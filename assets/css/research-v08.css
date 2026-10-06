@@ -1,0 +1,93 @@
+/* MIELOGOS v0.8 — public prior-art research note */
+.research-hero .doc-meta{margin-top:28px}
+.research-deck{max-width:860px}
+.research-layout{align-items:start}
+.research-sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.research-sidebar .status-pill{align-self:flex-start;margin-bottom:12px}
+.research-sidebar a{font-size:13px;line-height:1.35}
+.research-article>h2:first-child{margin-top:0}
+.research-article h2{margin-top:64px}
+.research-article h3{margin-top:38px;font-size:26px}
+.research-article h4{margin-top:30px;font-size:21px}
+.research-article blockquote{
+  margin:28px 0;
+  padding:3px 0 3px 24px;
+  border-left:4px solid var(--gold);
+  font-family:var(--serif);
+  font-size:25px;
+  line-height:1.42;
+}
+.research-article ul,
+.research-article ol{padding-left:24px}
+.research-article li{margin:7px 0}
+.research-article hr{
+  border:0;
+  border-top:1px solid var(--rule);
+  margin:54px 0;
+}
+.research-table-wrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  margin:30px 0 36px;
+  border:1px solid var(--rule);
+}
+.research-table-wrap table{
+  margin:0;
+  min-width:960px;
+}
+.research-callout{
+  margin:34px 0;
+  padding:26px 28px;
+  border:1px solid var(--rule);
+  background:var(--paper-hi);
+}
+.research-callout strong{
+  font-family:var(--serif);
+  font-size:23px;
+  font-weight:500;
+}
+.research-final{
+  margin-top:58px;
+  padding:36px 0 0;
+  border-top:1px solid var(--rule);
+}
+.research-final blockquote{
+  font-size:clamp(29px,4vw,46px);
+}
+.research-source-note{
+  font-size:13px;
+  color:var(--muted);
+}
+.research-mobile-toc{display:none}
+
+@media(max-width:980px){
+  .research-sidebar{display:none}
+  .research-mobile-toc{
+    display:block;
+    margin:0 0 34px;
+    border:1px solid var(--rule);
+    background:var(--paper-hi);
+    padding:18px 20px;
+  }
+  .research-mobile-toc summary{
+    cursor:pointer;
+    font-weight:700;
+    letter-spacing:.04em;
+  }
+  .research-mobile-toc nav{
+    display:grid;
+    gap:9px;
+    padding-top:16px;
+  }
+  .research-mobile-toc a{font-size:14px}
+}
+
+@media(max-width:620px){
+  .research-article h2{margin-top:50px}
+  .research-article blockquote{font-size:22px;padding-left:18px}
+  .research-callout{padding:22px 20px}
+}
