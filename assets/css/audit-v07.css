@@ -1,0 +1,92 @@
+/* MIELOGOS v0.7 — audit hardening and positioning */
+:root{--gold-deep:#8A6329}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{
+  outline:3px solid var(--gold-deep);
+  outline-offset:3px;
+}
+
+.nav-toggle{min-width:44px;min-height:44px}
+:target{scroll-margin-top:100px}
+
+.submission-public-note{
+  font-size:13px;
+  color:#d8d3c8;
+  margin-top:18px;
+}
+
+.positioning-band{
+  border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  background:linear-gradient(180deg,rgba(251,249,244,.45),rgba(243,239,230,0));
+}
+.positioning-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px;
+  background:var(--rule);
+  border:1px solid var(--rule);
+  margin-top:38px;
+}
+.positioning-card{
+  background:var(--paper-hi);
+  padding:34px 30px 32px;
+  min-height:285px;
+}
+.positioning-card h3{font-size:30px}
+.positioning-kicker{
+  display:block;
+  margin-bottom:24px;
+  color:var(--gold-deep);
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  font-size:11px;
+  font-weight:800;
+}
+.priority-card{
+  background:var(--charcoal);
+  color:#eee9df;
+}
+.priority-card .positioning-kicker{color:#d9bb7f}
+.priority-card p{color:#ddd7cc}
+.positioning-note{
+  margin-top:22px;
+  font-size:12px;
+  line-height:1.55;
+  color:var(--muted);
+}
+.priority-card .positioning-note{color:#bdb5a9}
+.positioning-close{
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) minmax(220px,.7fr);
+  align-items:end;
+  gap:46px;
+  margin-top:38px;
+}
+.positioning-close blockquote{
+  margin:0;
+  font-family:var(--serif);
+  font-size:clamp(28px,3.3vw,48px);
+  line-height:1.13;
+}
+.positioning-close p{margin:0 0 5px}
+
+@media(max-width:900px){
+  .positioning-grid{grid-template-columns:1fr}
+  .positioning-card{min-height:0}
+  .positioning-close{grid-template-columns:1fr;gap:22px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    scroll-behavior:auto!important;
+    transition-duration:.01ms!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+  }
+}
