@@ -14,22 +14,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find staging ZIP
+      - name: Find latest staging ZIP
+        shell: bash
         run: |
-          ZIP="MIELOGOS_Prize_GitHub_Staging_v0.1.zip"
-          if [ ! -f "$ZIP" ]; then
-            echo "Staging ZIP not found: $ZIP"
+          ZIP=$(ls -t MIELOGOS_Prize_GitHub_Staging_v*.zip 2>/dev/null | head -n 1)
+          if [ -z "$ZIP" ]; then
+            echo "MIELOGOS Prize staging ZIP not found."
             exit 1
           fi
+          echo "Using staging package: $ZIP"
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
 
       - name: Unpack website
+        shell: bash
         run: |
+          rm -rf /tmp/mielogos-prize-site
           mkdir -p /tmp/mielogos-prize-site
-          unzip -q -o MIELOGOS_Prize_GitHub_Staging_v0.1.zip -d /tmp/mielogos-prize-site
+          unzip -q -o "$ZIP" -d /tmp/mielogos-prize-site
           cp -a /tmp/mielogos-prize-site/. .
-          rm MIELOGOS_Prize_GitHub_Staging_v0.1.zip
+
+      - name: Remove staging ZIP packages
+        shell: bash
+        run: |
+          rm -f MIELOGOS_Prize_GitHub_Staging_v*.zip
 
       - name: Commit unpacked site
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -40,5 +50,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Deploy MIELOGOS Literary Prize website v0.1"
+          git commit -m "Deploy MIELOGOS Literary Prize website update"
           git push
