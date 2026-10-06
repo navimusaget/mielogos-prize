@@ -176,6 +176,51 @@ const MLP = (() => {
     });
   }
 
+
+  function applyOfficialContact(site){
+    const current=String(site?.contact||'prize@mielogos.com');
+    const previous='prize@mielogos.org';
+    const canonicalDocPaths=new Set([
+      '/terms/','/cycle-notice/','/entrant-guide/','/privacy/','/prize-rules/'
+    ]);
+    const here=normalizePath(location.pathname);
+
+    document.querySelectorAll('a[href^="mailto:"]').forEach(a=>{
+      const href=a.getAttribute('href')||'';
+      if(!href.toLowerCase().startsWith(`mailto:${previous}`)) return;
+
+      // Preserve the literal locked document body. A correction banner above it
+      // identifies the operative address without silently rewriting the record.
+      const insideLockedBody=canonicalDocPaths.has(here) && !!a.closest('.article');
+      if(insideLockedBody) return;
+
+      const suffix=href.slice(`mailto:${previous}`.length);
+      a.setAttribute('href',`mailto:${current}${suffix}`);
+      if(a.textContent.trim()===previous) a.textContent=current;
+    });
+
+    document.querySelectorAll('[data-contact]').forEach(el=>{
+      el.textContent=current;
+      if(el.tagName==='A') el.href=`mailto:${current}`;
+    });
+
+    if(canonicalDocPaths.has(here) && !document.querySelector('.contact-correction-notice')){
+      const article=document.querySelector('.article');
+      if(article){
+        const notice=document.createElement('div');
+        notice.className='notice contact-correction-notice';
+        notice.innerHTML=`
+          <strong>Operational contact correction — 7 October 2026</strong>
+          <p>The designated official correspondence address for the MIELOGOS Literary Prize is now
+          <a href="mailto:${current}">${current}</a>.</p>
+          <p>Earlier locked text is preserved below for documentary integrity. This correction changes
+          only the operational correspondence channel; all other provisions remain unchanged.
+          <a href="/corrections/official-prize-contact/">Correction record →</a></p>`;
+        article.parentNode.insertBefore(notice,article);
+      }
+    }
+  }
+
   function addPositioningLink(){
     document.querySelectorAll('.footer-col').forEach(col=>{
       const h=col.querySelector('h4');
@@ -292,10 +337,7 @@ const MLP = (() => {
       }
 
       document.querySelectorAll('[data-prize-descriptor]').forEach(el=>el.textContent=site.descriptor || 'A literary prize for Symbiotic Authorship.');
-      document.querySelectorAll('[data-contact]').forEach(el=>{
-        el.textContent=site.contact;
-        if(el.tagName==='A') el.href=`mailto:${site.contact}`;
-      });
+      applyOfficialContact(site);
 
       const partnerRoots=[...document.querySelectorAll('[data-partners]')];
       if(partnerRoots.length){
