@@ -1,4 +1,4 @@
-# MIELOGOS Literary Prize — static site v0.1
+# MIELOGOS Literary Prize — static site v0.5
 
 Canonical host: `https://prize.mielogos.org`
 
@@ -66,3 +66,26 @@ Responsive assets:
 
 - `assets/img/mielogos-prize-hero-desktop.jpg` — landscape desktop hero.
 - `assets/img/mielogos-prize-hero-mobile.jpg` — portrait mobile hero.
+
+## Editorial illustration system
+
+Approved public illustrations are integrated into the relevant explanatory pages:
+
+- recognition progression → `/prize/`
+- certificate + Public Recognition Record → `/verify/`
+- AI Literary Assessment → `/ai-literary-assessment/`
+- Symbiotic Authorship → `/symbiotic-authorship/`
+
+The images are conceptual explanatory visuals. Fictional works, names and provisional IDs shown inside them are not public Prize records.
+
+## Partners & Supporters
+
+The homepage and `/partners/` contain a permanent partnership area. Before the first external partner is listed, it functions as an open invitation rather than an empty sponsor block.
+
+Partner listings are data-driven from `data/partners.json`. To add a confirmed public partner:
+
+1. place its approved logo under `assets/img/partners/`;
+2. add an object with `name`, `type`, optional `url`, and optional `logo` to `data/partners.json`;
+3. use one of the role types already defined there, or add a new role only if the relationship actually requires it.
+
+Do not publish a logo before the relationship and permission to display it are confirmed. Partner support does not confer influence over eligibility, literary assessment or recognition decisions.

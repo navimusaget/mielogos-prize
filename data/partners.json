@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "types": {
+    "institutional": "Institutional Support",
+    "media": "Media Partners",
+    "literary": "Literary Partners",
+    "supporting": "Supporting Partners",
+    "sponsor": "Sponsors"
+  },
+  "partners": []
+}

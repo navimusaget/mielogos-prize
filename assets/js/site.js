@@ -27,6 +27,21 @@ const MLP = (() => {
     const recent=document.querySelector('[data-recent-years]'); if(recent){recent.innerHTML=cycles.slice().sort((a,b)=>b.year-a.year).slice(0,3).map(y=>`<a class=\"year-card\" href=\"${y.path}\"><div class=\"year-number\">${y.year}</div><div><div class=\"year-status\">${y.name}</div><h3>${y.year} ${y.name}</h3><p>${fmtDate(y.submission_open,{day:'numeric',month:'long'})} — ${fmtDate(y.submission_close,{day:'numeric',month:'long',year:'numeric'})}</p></div><div class=\"year-arrow\">→</div></a>`).join('');}
     document.querySelectorAll('[data-prize-descriptor]').forEach(el=>el.textContent=site.descriptor || 'A literary prize for Symbiotic Authorship.');
     document.querySelectorAll('[data-contact]').forEach(el=>{el.textContent=site.contact; if(el.tagName==='A')el.href=`mailto:${site.contact}`});
+    const partnerRoots=[...document.querySelectorAll('[data-partners]')];
+    if(partnerRoots.length){
+      try{
+        const pdata=await get('/data/partners.json'), partners=Array.isArray(pdata.partners)?pdata.partners:[], types=pdata.types||{};
+        const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        partnerRoots.forEach(root=>{
+          if(!partners.length){ root.hidden=true; root.innerHTML=''; return; }
+          const order=Object.keys(types), grouped=new Map();
+          partners.forEach(p=>{const key=p.type||'supporting'; if(!grouped.has(key)) grouped.set(key,[]); grouped.get(key).push(p);});
+          const keys=[...order.filter(k=>grouped.has(k)),...([...grouped.keys()].filter(k=>!order.includes(k)))];
+          root.hidden=false;
+          root.innerHTML=keys.map(key=>`<section class="partner-group"><h3 class="partner-group-title">${esc(types[key]||key)}</h3><div class="partner-logos">${grouped.get(key).map(p=>{const body=p.logo?`<img src="${esc(p.logo)}" alt="${esc(p.name)}" loading="lazy">`:`<span class="partner-name">${esc(p.name)}</span>`; return p.url?`<a class="partner-card" href="${esc(p.url)}" target="_blank" rel="noopener">${body}</a>`:`<div class="partner-card">${body}</div>`}).join('')}</div></section>`).join('');
+        });
+      }catch(err){console.error('Cannot load partners',err); partnerRoots.forEach(root=>root.hidden=true);}
+    }
     const nav=document.querySelector('.primary-nav'), toggle=document.querySelector('.nav-toggle'); if(nav&&toggle){toggle.addEventListener('click',()=>{nav.classList.toggle('open');toggle.setAttribute('aria-expanded',nav.classList.contains('open'));});}
     return {site,cycles,c,s};
   }
