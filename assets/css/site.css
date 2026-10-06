@@ -60,3 +60,6 @@ h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-.025em;line-he
 
 @media(max-width:980px){.partner-logos{grid-template-columns:repeat(2,minmax(0,1fr))}.partner-invite{grid-template-columns:1fr;gap:24px}}
 @media(max-width:620px){.editorial-visual{margin-top:32px}.editorial-visual.scrollable .visual-frame{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}.editorial-visual.scrollable img{width:auto;max-width:none;min-width:760px;height:auto}.partner-logos{grid-template-columns:1fr}.partner-invite{padding:28px 22px}.partner-invite h3{font-size:29px}.partner-card{min-height:125px}}
+
+/* v0.6: responsive editorial picture sources */
+.editorial-visual picture{display:block;width:100%}

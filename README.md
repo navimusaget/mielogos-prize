@@ -1,4 +1,4 @@
-# MIELOGOS Literary Prize — static site v0.5
+# MIELOGOS Literary Prize — static site v0.6
 
 Canonical host: `https://prize.mielogos.org`
 
@@ -75,6 +75,8 @@ Approved public illustrations are integrated into the relevant explanatory pages
 - certificate + Public Recognition Record → `/verify/`
 - AI Literary Assessment → `/ai-literary-assessment/`
 - Symbiotic Authorship → `/symbiotic-authorship/`
+
+The Recognition progression and Symbiotic Authorship pages use responsive desktop/mobile image pairs. On phones, the approved portrait artwork is shown in full rather than forcing horizontal scrolling.
 
 The images are conceptual explanatory visuals. Fictional works, names and provisional IDs shown inside them are not public Prize records.
 
