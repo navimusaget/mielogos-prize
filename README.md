@@ -56,3 +56,13 @@ The exact locked public DOCX files copied from the canonical corpus are under `d
 Use the repository root as the GitHub Pages publishing source. `CNAME` is already set to `prize.mielogos.org`. Configure the `prize` DNS record to the actual GitHub Pages hostname for the repository, then enforce HTTPS once DNS validates.
 
 `mielogos.com` should be handled separately as a redirect to `https://prize.mielogos.org/` rather than as the canonical host.
+
+
+## Homepage hero imagery
+
+The homepage uses an evergreen aspirational recognition scene rather than a documentary image of an actual laureate. The scene intentionally shows a fictional winning title to demonstrate how MIELOGOS recognition can live on a book. Cycle dates and live status remain HTML/data-driven and are not embedded in the image.
+
+Responsive assets:
+
+- `assets/img/mielogos-prize-hero-desktop.jpg` — landscape desktop hero.
+- `assets/img/mielogos-prize-hero-mobile.jpg` — portrait mobile hero.
