@@ -1,0 +1,46 @@
+[
+  {
+    "year": 2027,
+    "name": "Founding Cycle",
+    "current": true,
+    "release_window": "1 January 2024 – 31 December 2026",
+    "submission_open": "2027-02-01T00:00:00Z",
+    "submission_close": "2027-05-31T23:59:00Z",
+    "eligibility_target": "2027-06-30",
+    "reading": "Rolling through August 2027",
+    "longlist_date": "2027-09-01",
+    "shortlist_date": "2027-10-15",
+    "winners_date": "2027-12-01",
+    "entry_fee": "None",
+    "monetary_prize": "None",
+    "physical_prize": "None",
+    "age": "18+",
+    "international": true,
+    "max_entries": 2,
+    "categories": [
+      {
+        "id": "fiction",
+        "name": "Fiction"
+      },
+      {
+        "id": "poetry",
+        "name": "Poetry"
+      },
+      {
+        "id": "literary-nonfiction",
+        "name": "Literary Nonfiction"
+      },
+      {
+        "id": "graphic-hybrid-experimental",
+        "name": "Graphic, Hybrid & Experimental Literature"
+      }
+    ],
+    "limits": {
+      "longlist": 12,
+      "shortlist": 6,
+      "winner": 1
+    },
+    "submission_url": "",
+    "path": "/prize-years/2027/"
+  }
+]
