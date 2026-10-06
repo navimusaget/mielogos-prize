@@ -91,3 +91,65 @@
   .research-article blockquote{font-size:22px;padding-left:18px}
   .research-callout{padding:22px 20px}
 }
+
+/* v0.9 — mobile containment hotfix
+   Wide evidence tables must scroll inside the article, never widen the page/grid. */
+html,body{
+  max-width:100%;
+  overflow-x:hidden;
+}
+.research-layout,
+.research-article,
+.research-table-wrap{
+  min-width:0;
+  max-width:100%;
+}
+.research-article{
+  width:100%;
+  overflow-wrap:break-word;
+}
+.research-table-wrap{
+  display:block;
+  width:100%;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+}
+.research-table-wrap table{
+  width:max-content;
+  min-width:900px;
+  max-width:none;
+}
+
+@media(max-width:980px){
+  .research-layout{
+    display:block;
+    width:100%;
+  }
+  .research-article{
+    width:100%;
+    max-width:100%;
+  }
+}
+
+@media(max-width:620px){
+  .research-hero .doc-meta{
+    gap:10px 14px;
+    font-size:10px;
+    line-height:1.5;
+  }
+  .research-article{
+    font-size:16px;
+    line-height:1.68;
+  }
+  .research-article h2{
+    font-size:34px;
+    line-height:1.08;
+  }
+  .research-article h3{
+    font-size:25px;
+    line-height:1.12;
+  }
+  .research-mobile-toc{
+    width:100%;
+  }
+}
