@@ -10,6 +10,19 @@ This package is deliberately plain static HTML/CSS/JS so it can be hosted on Git
 
 Annual content lives in `data/cycles.json`; public recognition data lives in `data/recognitions.json`; the archive views read those data files automatically. The website templates do not need to be redesigned for a new cycle.
 
+
+## Visual identity roles
+
+The public identity uses three distinct levels:
+
+- **Core glyph** — compact neutral mark for favicon and small digital surfaces.
+- **Primary Prize Seal** — neutral ceremonial emblem for the Prize itself; used in the homepage hero and institutional contexts. It contains **MIELOGOS / LITERARY PRIZE** and never implies that a Winner has already been selected.
+- **Winner Medal** — recognition mark reserved for actual Winner status.
+
+Official descriptor: **A literary prize for Symbiotic Authorship.**
+
+Do not place “first in the world” or equivalent priority claims inside the permanent seal. Any historical priority claim must remain separate prose and should be used only after independent verification.
+
 ## Live submission button
 
 The header `ENTER` button is permanent and always routes to `/enter/`.
