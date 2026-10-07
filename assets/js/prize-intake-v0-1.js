@@ -52,12 +52,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   function addAuthor(){ authorsList.appendChild(authorCard()); renumberAuthors(); }
   addAuthor();
   addAuthorBtn.addEventListener('click',addAuthor);
-function clearFieldError(el){
-if(el && el.classList) el.classList.remove(‘invalid-field’);
-}
 
-form.addEventListener(‘input’,e=>clearFieldError(e.target));
-form.addEventListener(‘change’,e=>clearFieldError(e.target));
+  function clearFieldError(el){
+    if(el && el.classList) el.classList.remove('invalid-field');
+  }
+
+  // v0.1.3 UX fix: corrected fields lose their red outline immediately.
+  form.addEventListener('input',e=>clearFieldError(e.target));
+  form.addEventListener('change',e=>clearFieldError(e.target));
+
   function syncRole(){
     const isRep=role.value==='REPRESENTATIVE';
     representativeBox.hidden=!isRep;
