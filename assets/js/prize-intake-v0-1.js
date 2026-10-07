@@ -80,7 +80,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   function capForCategory(){ return category.value==='GRAPHIC_HYBRID_EXPERIMENTAL'?graphicCap:textCap; }
   function syncCategory(){
-    if(!category.value){ fileRule.textContent='Select a category to see the applicable file limit.'; return; }
+    if(!category.value){
+      fileRule.textContent='Select a category to see the applicable file limit.';
+      syncReviewMeta();
+      return;
+    }
     const graphic=category.value==='GRAPHIC_HYBRID_EXPERIMENTAL';
     fileRule.textContent=graphic?'Review-copy limit for this category: 50 MB.':'Review-copy limit for this category: 10 MB.';
     syncReviewMeta();
@@ -91,6 +95,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   function syncReviewMeta(){
     const f=reviewFile.files[0];
     if(!f){reviewMeta.textContent='EPUB or PDF primary; DOCX fallback where layout is not constitutive.';return;}
+    if(!category.value){
+      reviewMeta.textContent=`${f.name} · ${fmtBytes(f.size)} · select a category to determine the applicable limit`;
+      return;
+    }
     const cap=capForCategory();
     reviewMeta.textContent=`${f.name} · ${fmtBytes(f.size)} · current category limit ${Math.round(cap/MiB)} MB`;
   }
