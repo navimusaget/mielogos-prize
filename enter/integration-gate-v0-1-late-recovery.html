@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>INTEGRATION-GATE v0.1 — Late Recovery Test</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    body{margin:0;background:#f3efe6;color:#191816}
+    main{max-width:760px;margin:0 auto;padding:28px 18px 64px}
+    .card{background:#fffdf8;border:1px solid #c9c1b4;padding:22px;margin:16px 0}
+    .warn{border-left:5px solid #966c27}
+    .ok{border-left:5px solid #2f8a57}
+    .bad{border-left:5px solid #a83939}
+    h1{font-size:30px;line-height:1.1;margin:0 0 8px}
+    h2{font-size:20px;margin:0 0 12px}
+    p{line-height:1.5}
+    label{display:block;margin:16px 0 6px;font-weight:700}
+    input,button{font:inherit}
+    input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #8e887e;background:#fff;color:#111}
+    button{width:100%;padding:14px;border:0;background:#966c27;color:#fff;font-weight:800;margin-top:14px}
+    button.secondary{background:#333}
+    button.recover{background:#2f6d50}
+    button:disabled{opacity:.55}
+    pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-word;background:#161616;color:#f4f4f4;padding:14px;overflow:auto}
+    .small{font-size:13px;color:#625d55}
+    progress{width:100%;height:18px;margin-top:14px}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+  </style>
+</head>
+<body>
+<main>
+  <section class="card warn">
+    <h1>INTEGRATION-GATE v0.1</h1>
+    <p><strong>LATE RECOVERABILITY TEST — FORCED FAILURE AFTER EVENTS.</strong></p>
+    <p>This creates a third synthetic sandbox transaction, uploads the same PDF, writes every normal sandbox register stage including Event Log, then deliberately fails before the Journal can be marked COMMITTED. Recovery must finalize with the same SBX27 ID and no duplicate rows.</p>
+    <p class="small">Synthetic request: <code>itg_recovery_events_v01_20261008_001</code>.</p>
+  </section>
+
+  <section class="card">
+    <h2>1. Inputs</h2>
+    <label for="secret">Integration test secret</label>
+    <input id="secret" type="password" autocomplete="off">
+    <label for="file">Same PDF used in previous tests</label>
+    <input id="file" type="file" accept=".pdf,application/pdf">
+    <progress id="progress" max="100" value="0"></progress>
+    <p id="progress-text" class="small">Waiting.</p>
+  </section>
+
+  <section class="card">
+    <h2>2. Controlled stages</h2>
+    <button id="setup" type="button">A — PREPARE + UPLOAD THIRD SANDBOX REQUEST</button>
+    <button id="force" class="secondary" type="button">B — FORCE FAILURE AFTER EVENTS</button>
+    <button id="recover" class="recover" type="button">C — RECOVER FINAL COMMIT</button>
+    <p class="small">Run only the button requested during the test sequence.</p>
+  </section>
+
+  <section class="card" id="result-card">
+    <h2>3. Result</h2>
+    <p id="summary">No action started.</p>
+    <pre id="out">Waiting.</pre>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const ENDPOINT='https://script.google.com/macros/s/AKfycbxnXH32goGMPjDCSrl9r8VNS36k4x-lx2-VzdtxOHyuJo7TLuTzo5k-y0aRUyMOUrzx/exec';
+  const REQUEST_ID='itg_recovery_events_v01_20261008_001';
+  const EXPECTED_SIZE=1444590;
+  const EXPECTED_SHA256='a5c80e8650a3e1733414946473e95084059b49d809f691a2eeeafb3601576b31';
+  const CHUNK_SIZE=512*1024;
+  const $=id=>document.getElementById(id);
+
+  function setResult(kind,summary,obj){
+    const card=$('result-card'); card.classList.remove('ok','bad'); if(kind) card.classList.add(kind);
+    $('summary').textContent=summary; $('out').textContent=typeof obj==='string'?obj:JSON.stringify(obj,null,2);
+  }
+  function setProgress(done,total,text){
+    const pct=total?Math.floor(done*100/total):0; $('progress').value=pct;
+    $('progress-text').textContent=`${pct}% · ${done} / ${total} bytes · ${text}`;
+  }
+  function disableAll(v){['setup','force','recover'].forEach(id=>$(id).disabled=v);}
+  async function sha256File(file){
+    const hash=await crypto.subtle.digest('SHA-256',await file.arrayBuffer());
+    return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  function bytesToBase64(bytes){
+    let binary=''; const step=0x8000;
+    for(let i=0;i<bytes.length;i+=step) binary+=String.fromCharCode(...bytes.subarray(i,i+step));
+    return btoa(binary);
+  }
+  async function postNoCors(body){
+    await fetch(ENDPOINT,{method:'POST',mode:'no-cors',cache:'no-store',
+      headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(body)});
+  }
+  function jsonpStatus(secret,timeoutMs=20000){
+    return new Promise((resolve,reject)=>{
+      const cb='__mielogos_cb_'+Math.random().toString(36).slice(2), script=document.createElement('script'); let timer;
+      window[cb]=data=>{clearTimeout(timer);try{delete window[cb];}catch(_){window[cb]=undefined;}script.remove();resolve(data);};
+      script.onerror=()=>{clearTimeout(timer);try{delete window[cb];}catch(_){window[cb]=undefined;}script.remove();reject(new Error('Status JSONP request failed.'));};
+      const q=new URLSearchParams({action:'status',request_id:REQUEST_ID,test_secret:secret,callback:cb,_:String(Date.now())});
+      script.src=ENDPOINT+'?'+q.toString(); document.head.appendChild(script);
+      timer=setTimeout(()=>{try{delete window[cb];}catch(_){window[cb]=undefined;}script.remove();reject(new Error('Status request timed out.'));},timeoutMs);
+    });
+  }
+  async function pollStatus(secret){
+    let lastErr; for(let i=0;i<6;i++){try{return await jsonpStatus(secret);}catch(err){lastErr=err;await new Promise(r=>setTimeout(r,1800));}}
+    throw lastErr||new Error('Status polling failed.');
+  }
+  async function waitFor(secret,predicate,attempts=24){
+    let last=null; for(let i=0;i<attempts;i++){last=await pollStatus(secret);if(predicate(last)) return last;await new Promise(r=>setTimeout(r,1300));} return last;
+  }
+  function buildPayload(){
+    return {
+      administrative_contact_name:'Late Recovery Test Entrant',
+      contact_email:'late-recovery-test@example.com',
+      submitter_role:'AUTHOR', representative_authority_confirm:false,
+      authors:[{credited_name:'Late Recovery Test Author',public_credit_name:'',age_18plus_confirmed:true}],
+      work_title:'INTEGRATION LATE RECOVERY TEST — NOT A SUBMISSION',
+      category:'FICTION', original_language:'English', is_translation:false,
+      translator_information:'', collaboration_information:'',
+      controlling_public_release_date_or_year:'2026',
+      publishing_route_or_venue:'Synthetic late recovery integration test',
+      public_release_reference:'SANDBOX LATE RECOVERY TEST REFERENCE — NOT PUBLICATION EVIDENCE',
+      revised_edition_note:'',
+      symbiotic_declaration:'This synthetic late recovery test describes a materially bidirectional human–AI creative relation solely for integration testing and is not an actual Prize entry.',
+      synopsis:'Synthetic synopsis used only for MIELOGOS late-stage sandbox recoverability testing.',
+      synopsis_publicity_authority:true, cover_present:false, cover_publicity_authority:false,
+      rights_and_authority_confirm:true, terms_acceptance:true, privacy_notice_ack:true,
+      ai_processing_authorization:true, no_provider_guarantee_ack:true,
+      accuracy_good_faith_confirm:true, review_copy_final_confirm:true
+    };
+  }
+  async function setup(){
+    disableAll(true);
+    try{
+      const secret=$('secret').value.trim(), file=$('file').files[0];
+      if(!secret) throw new Error('Enter the Integration test secret.');
+      if(!file) throw new Error('Choose the same PDF.');
+      if(file.size!==EXPECTED_SIZE) throw new Error(`Wrong file size: expected ${EXPECTED_SIZE}, got ${file.size}.`);
+      setProgress(0,EXPECTED_SIZE,'calculating SHA-256');
+      const hash=await sha256File(file); if(hash!==EXPECTED_SHA256) throw new Error('Wrong PDF: SHA-256 mismatch.');
+
+      let status=await pollStatus(secret);
+      if(status&&status.ok===true&&status.committed===true){setResult('bad','Late recovery request is already committed.',status);return;}
+
+      if(!status||status.ok!==true||status.error==='NOT_FOUND'){
+        await postNoCors({action:'prepare',test_secret:secret,request_id:REQUEST_ID,payload:buildPayload(),
+          review_file:{name:file.name,mime_type:file.type||'application/pdf',size_bytes:file.size,sha256:hash}});
+        status=await waitFor(secret,s=>s&&s.ok===true&&['PREPARED','UPLOAD_READY','UPLOADING','UPLOAD_COMPLETE'].includes(s.transaction_state),18);
+      }
+      if(status.transaction_state==='PREPARED'){
+        await postNoCors({action:'init_upload',test_secret:secret,request_id:REQUEST_ID});
+        status=await waitFor(secret,s=>s&&s.ok===true&&['UPLOAD_READY','UPLOADING','UPLOAD_COMPLETE'].includes(s.transaction_state),18);
+      }
+      if(status.upload_complete===true){
+        setProgress(EXPECTED_SIZE,EXPECTED_SIZE,'already complete');
+        setResult('ok','LATE RECOVERY SETUP PASS — request already uploaded and ready.',status);return;
+      }
+      let offset=Number(status.upload_next_offset||0);
+      while(offset<EXPECTED_SIZE){
+        const endExclusive=Math.min(offset+CHUNK_SIZE,EXPECTED_SIZE);
+        const bytes=new Uint8Array(await file.slice(offset,endExclusive).arrayBuffer());
+        setProgress(offset,EXPECTED_SIZE,`sending chunk ${offset}-${endExclusive-1}`);
+        await postNoCors({action:'upload_chunk',test_secret:secret,request_id:REQUEST_ID,offset,total_size:EXPECTED_SIZE,chunk_base64:bytesToBase64(bytes)});
+        status=await waitFor(secret,s=>s&&s.ok===true&&(s.last_error_code||s.upload_complete===true||Number(s.upload_next_offset||0)>offset),18);
+        if(status.last_error_code) throw new Error(status.last_error_code+': '+(status.last_error_summary||''));
+        if(status.upload_complete===true){offset=EXPECTED_SIZE;break;}
+        const next=Number(status.upload_next_offset||0); if(next<=offset) throw new Error('Server offset did not advance.'); offset=next;
+      }
+      status=await pollStatus(secret);
+      const pass=status.ok===true&&status.transaction_state==='UPLOAD_COMPLETE'&&status.last_completed_stage==='UPLOAD_VERIFIED'&&status.submission_id===''&&status.committed===false;
+      if(!pass){setResult('bad','Late recovery setup did not reach UPLOAD_COMPLETE.',status);return;}
+      setProgress(EXPECTED_SIZE,EXPECTED_SIZE,'complete');
+      setResult('ok','LATE RECOVERY SETUP PASS — third request uploaded; no Submission ID and no commit yet.',status);
+    }catch(err){setResult('bad','LATE RECOVERY SETUP FAILED',String(err&&err.stack||err));}finally{disableAll(false);}
+  }
+
+  async function force(){
+    disableAll(true);
+    try{
+      const secret=$('secret').value.trim(); if(!secret) throw new Error('Enter the Integration test secret.');
+      const before=await pollStatus(secret);
+      if(!before.ok) throw new Error('Request not found.');
+      if(before.committed) throw new Error('Already committed.');
+      if(before.transaction_state!=='UPLOAD_COMPLETE') throw new Error('Expected UPLOAD_COMPLETE; got '+before.transaction_state);
+      setResult('','Forcing failure after EVENTS_WRITTEN…',before);
+      await postNoCors({action:'commit',test_secret:secret,request_id:REQUEST_ID,debug_fail_after_stage:'EVENTS'});
+      const status=await waitFor(secret,s=>s&&s.ok===true&&(s.transaction_state==='COMMIT_ERROR_RETRYABLE'||s.transaction_state==='COMMITTED'),26);
+      const pass=status&&status.transaction_state==='COMMIT_ERROR_RETRYABLE'&&status.last_completed_stage==='EVENTS_WRITTEN'&&
+        /^SBX27-\d{6}$/.test(status.submission_id||'')&&status.committed===false&&status.last_error_code==='DEBUG_FORCED_FAILURE_EVENTS';
+      if(!pass){setResult('bad','Forced late failure did not stop at EVENTS_WRITTEN.',status);return;}
+      setResult('ok','FORCED LATE FAILURE PASS — all register stages written, Journal intentionally left retryable.',status);
+    }catch(err){setResult('bad','FORCED LATE FAILURE TEST FAILED',String(err&&err.stack||err));}finally{disableAll(false);}
+  }
+
+  async function recover(){
+    disableAll(true);
+    try{
+      const secret=$('secret').value.trim(); if(!secret) throw new Error('Enter the Integration test secret.');
+      const before=await pollStatus(secret);
+      if(!before.ok) throw new Error('Request not found.');
+      if(before.committed){setResult('ok','LATE RECOVERY ALREADY COMPLETE — safe idempotent status.',before);return;}
+      if(before.transaction_state!=='COMMIT_ERROR_RETRYABLE') throw new Error('Expected COMMIT_ERROR_RETRYABLE; got '+before.transaction_state);
+      const expectedId=before.submission_id;
+      setResult('','Retrying final commit without forced failure…',before);
+      await postNoCors({action:'commit',test_secret:secret,request_id:REQUEST_ID});
+      const status=await waitFor(secret,s=>s&&s.ok===true&&(s.transaction_state==='COMMITTED'||s.transaction_state==='COMMIT_ERROR_RETRYABLE'),28);
+      const pass=status&&status.transaction_state==='COMMITTED'&&status.last_completed_stage==='COMMITTED'&&status.committed===true&&
+        status.submission_id===expectedId&&status.production_submission===false&&status.official_receipt===false&&!status.last_error_code;
+      if(!pass){setResult('bad','Late recovery did not reach final COMMITTED state.',status);return;}
+      setResult('ok','LATE RECOVERY COMMIT PASS — Journal finalized with same SBX27 ID; no duplicate register rows expected.',status);
+    }catch(err){setResult('bad','LATE RECOVERY COMMIT FAILED',String(err&&err.stack||err));}finally{disableAll(false);}
+  }
+
+  $('setup').addEventListener('click',setup);
+  $('force').addEventListener('click',force);
+  $('recover').addEventListener('click',recover);
+})();
+</script>
+</body>
+</html>
