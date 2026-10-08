@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>2027 Submission Form — MIELOGOS Literary Prize</title>
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#F3EFE6">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/site.css">
+  <link rel="stylesheet" href="/assets/css/prize-intake-v0-1.css">
+  <style>
+    .native-file-input{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0;
+    }
+    .file-picker-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.75rem;
+      align-items:center;
+      margin:.55rem 0 .4rem;
+    }
+    .file-picker-row .button{
+      margin:0;
+      cursor:pointer;
+    }
+    .file-selection-status{
+      font-size:.95rem;
+      line-height:1.35;
+    }
+    .native-file-input:focus + .button{
+      outline:2px solid currentColor;
+      outline-offset:3px;
+    }
+    .native-file-input.invalid-field + .button{
+      outline:2px solid currentColor;
+      outline-offset:3px;
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="MIELOGOS Literary Prize home">
+      <img class="brand-mark" src="/assets/img/favicon-192.png" alt="">
+      <span class="brand-type"><span class="brand-main">MIELOGOS</span><span class="brand-sep"></span><span class="brand-sub">LITERARY PRIZE</span></span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <a href="/prize-years/2027/">2027</a><a href="/prize/">The Prize</a><a href="/judging/">Judging</a><a href="/enter/" aria-current="page">Enter</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-hero intake-hero">
+    <div class="container">
+      <div class="breadcrumbs"><a href="/">Home</a> / <a href="/enter/">Enter</a> / Submission form</div>
+      <p class="eyebrow">2027 Founding Cycle</p>
+      <h1>2027 submission form</h1>
+      <p>Complete the form below to enter the 2027 MIELOGOS Literary Prize. Please check the work, credits and review copy carefully before submitting.</p>
+</div>
+  </section>
+
+  <section class="section intake-section">
+    <div class="container intake-shell">
+      <aside class="intake-progress" aria-label="Submission sections">
+        <div class="status-pill gold">2027 Entry</div>
+        <ol>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#authors">Authors</a></li>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#release">Public release</a></li>
+          <li><a href="#symbiotic">Symbiotic Authorship</a></li>
+          <li><a href="#files">Review copy</a></li>
+          <li><a href="#publicity">Publicity</a></li>
+          <li><a href="#confirmations">Confirmations</a></li>
+        </ol>
+        <p class="muted small">A submission receipt confirms technical receipt only. Formal acknowledgement follows separately.</p>
+      </aside>
+
+      <form id="prize-intake-form" class="intake-form" novalidate autocomplete="off">
+        <section class="form-section" id="contact">
+          <p class="section-kicker">01 · Contact</p>
+          <h2>Who should we contact?</h2>
+          <p class="form-help">Private administrative correspondence only. You do not need to provide a civil name, postal address, phone number or ID document.</p>
+          <div class="field-grid two">
+            <label class="field"><span>Administrative contact name <b>*</b></span><input name="administrative_contact_name" required maxlength="140"></label>
+            <label class="field"><span>Email <b>*</b></span><input name="contact_email" type="email" required maxlength="254" inputmode="email"></label>
+          </div>
+          <label class="field"><span>Your role <b>*</b></span>
+            <select name="submitter_role" id="submitter-role" required>
+              <option value="">Select…</option>
+              <option value="AUTHOR">Credited author</option>
+              <option value="COAUTHOR">Credited co-author</option>
+              <option value="REPRESENTATIVE">Representative submitting for the author(s)</option>
+            </select>
+          </label>
+          <div id="representative-box" class="conditional-box" hidden>
+            <label class="checkline"><input type="checkbox" name="representative_authority_confirm"><span>I confirm in good faith that I have authority to submit this work for the credited author(s). <b>*</b></span></label>
+          </div>
+        </section>
+
+        <section class="form-section" id="authors">
+          <p class="section-kicker">02 · Credited authors</p>
+          <h2>Human authorship</h2>
+          <p class="form-help">List every credited participating human author in the order the credit should appear. Each credited participating human author is counted separately for the two-work submission limit.</p>
+          <div id="authors-list"></div>
+          <button class="mini-button" type="button" id="add-author">+ Add another credited author</button>
+        </section>
+
+        <section class="form-section" id="work">
+          <p class="section-kicker">03 · The work</p>
+          <h2>Work details</h2>
+          <div class="field-grid two">
+            <label class="field"><span>Title <b>*</b></span><input name="work_title" required maxlength="300" aria-describedby="work-title-help"><small id="work-title-help">Maximum 300 characters.</small></label>
+            <label class="field"><span>Category <b>*</b></span>
+              <select name="category" id="category" required>
+                <option value="">Select…</option>
+                <option value="FICTION">Fiction</option>
+                <option value="POETRY">Poetry</option>
+                <option value="LITERARY_NONFICTION">Literary Nonfiction</option>
+                <option value="GRAPHIC_HYBRID_EXPERIMENTAL">Graphic, Hybrid &amp; Experimental Literature</option>
+              </select>
+            </label>
+            <label class="field"><span>Original language <b>*</b></span><input name="original_language" required maxlength="100" placeholder="e.g. English, Spanish, German"></label>
+            <div class="field static-field"><span>Review-copy language</span><strong>English</strong><small>Fixed for the 2027 Founding Cycle.</small></div>
+          </div>
+          <label class="checkline"><input type="checkbox" id="translation-toggle" name="is_translation"><span>The submitted English review copy is a translation.</span></label>
+          <div id="translator-box" class="conditional-box" hidden>
+            <label class="field"><span>Translator information <b>*</b></span>
+            <textarea name="translator_information" rows="3" maxlength="1200" aria-describedby="translator-information-help translator-information-count" placeholder="Name/credit and any concise information needed to identify the translation."></textarea>
+            <small id="translator-information-help">Maximum 1,200 characters including spaces.</small>
+            <small id="translator-information-count" aria-live="polite">0 / 1,200 characters</small>
+          </label>
+          </div>
+          <label class="field"><span>Collaboration information <span class="optional">optional, where relevant</span></span>
+            <textarea name="collaboration_information" rows="3" maxlength="1600" aria-describedby="collaboration-information-help collaboration-information-count" placeholder="Only information needed to understand the credited collaboration; do not provide a complete creative history."></textarea>
+            <small id="collaboration-information-help">Maximum 1,600 characters including spaces.</small>
+            <small id="collaboration-information-count" aria-live="polite">0 / 1,600 characters</small>
+          </label>
+        </section>
+
+        <section class="form-section" id="release">
+          <p class="section-kicker">04 · Public release</p>
+          <h2>How did the work enter public circulation?</h2>
+          <p class="form-help">The Founding Cycle covers qualifying public release in 2024–2026. A URL is not required if another independently verifiable reference is more appropriate.</p>
+          <div class="field-grid two">
+            <label class="field"><span>Controlling public-release date or year <b>*</b></span><input name="controlling_public_release_date_or_year" required maxlength="10" placeholder="YYYY or YYYY-MM-DD"></label>
+            <label class="field"><span>Publishing route / venue <span class="optional">where applicable</span></span><input name="publishing_route_or_venue" maxlength="300" aria-describedby="publishing-route-help"><small id="publishing-route-help">Maximum 300 characters.</small></label>
+          </div>
+          <label class="field"><span>Public-release reference <b>*</b></span>
+            <input name="public_release_reference" required maxlength="1000" aria-describedby="public-release-reference-help public-release-reference-count" placeholder="URL, ISBN/catalogue/library/publication reference, or another verifiable route">
+            <small id="public-release-reference-help">Maximum 1,000 characters.</small>
+            <small id="public-release-reference-count" aria-live="polite">0 / 1,000 characters</small>
+          </label>
+          <label class="field"><span>Revised-edition note <span class="optional">only if eligibility relies on a materially revised edition</span></span>
+            <textarea name="revised_edition_note" rows="3" maxlength="1600" aria-describedby="revised-edition-help revised-edition-count"></textarea>
+            <small id="revised-edition-help">Maximum 1,600 characters including spaces.</small>
+            <small id="revised-edition-count" aria-live="polite">0 / 1,600 characters</small>
+          </label>
+        </section>
+
+        <section class="form-section" id="symbiotic">
+          <p class="section-kicker">05 · Symbiotic Authorship</p>
+          <h2>Tell us how the work came into being.</h2>
+          <p class="form-help">Give a good-faith account of how human–AI interaction materially affected the creation or development of this work. We do not ask for percentages, prompt counts, complete chats or a model inventory.</p>
+          <label class="field"><span>Symbiotic Authorship declaration <b>*</b></span>
+            <textarea name="symbiotic_declaration" required rows="8" maxlength="8000" aria-describedby="symbiotic-declaration-help declaration-count-wrap" placeholder="Describe the creative relation and its material effect on the work."></textarea>
+            <small id="symbiotic-declaration-help">Maximum 8,000 characters including spaces. Focus on the creative relation and its material effect on the work.</small>
+            <small id="declaration-count-wrap"><span id="declaration-count">0</span> / 8,000 characters</small>
+          </label>
+        </section>
+
+        <section class="form-section" id="files">
+          <p class="section-kicker">06 · Review copy</p>
+          <h2>The version you want judged</h2>
+          <div class="file-rule" id="file-rule">Select a category to see the applicable file limit.</div>
+          <div class="field file-field">
+            <span>Review copy <b>*</b></span>
+            <div class="file-picker-row">
+              <input class="native-file-input" name="review_file" id="review-file" type="file" required accept=".epub,.pdf,.docx,application/epub+zip,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+              <label class="button" for="review-file">Choose review copy</label>
+              <span class="file-selection-status" id="review-file-name" aria-live="polite">No file selected</span>
+            </div>
+            <small id="review-file-meta">EPUB or PDF primary; DOCX fallback where layout is not constitutive.</small>
+          </div>
+          <div class="notice compact"><strong>Please check before sending.</strong><p>Correct work? Correct file? Complete file? Final version? Opens correctly? Correct title and author credit?</p></div>
+        </section>
+
+        <section class="form-section" id="publicity">
+          <p class="section-kicker">07 · Publicity material</p>
+          <h2>Synopsis and optional cover</h2>
+          <label class="field"><span>Short synopsis <b>*</b></span>
+            <textarea name="synopsis" id="synopsis" required rows="5" maxlength="2400" aria-describedby="synopsis-help synopsis-count"></textarea>
+            <small id="synopsis-help">Maximum 2,400 characters including spaces (roughly 350–400 words). Please provide a concise synopsis, not an excerpt or manuscript text.</small>
+            <small id="synopsis-count" aria-live="polite">0 / 2,400 characters</small>
+          </label>
+          <label class="checkline"><input type="checkbox" name="synopsis_publicity_authority" required><span>I authorize MIELOGOS to use this submitted synopsis for Prize publicity and recognition materials if appropriate. <b>*</b></span></label>
+          <div class="field file-field">
+            <span>Cover image <span class="optional">optional</span></span>
+            <div class="file-picker-row">
+              <input class="native-file-input" name="cover_image" id="cover-image" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+              <label class="button" for="cover-image">Choose cover image</label>
+              <span class="file-selection-status" id="cover-file-name" aria-live="polite">No file selected</span>
+            </div>
+            <small id="cover-file-meta">Optional JPEG, PNG or WebP · maximum file size 2 MB.</small>
+          </div>
+          <div id="cover-authority-box" class="conditional-box" hidden>
+            <label class="checkline"><input type="checkbox" name="cover_publicity_authority"><span>I confirm that I have authority to permit MIELOGOS to use this cover image for Prize publicity and archive purposes. <b>*</b></span></label>
+          </div>
+        </section>
+
+        <section class="form-section" id="confirmations">
+          <p class="section-kicker">08 · Confirmations</p>
+          <h2>Before you submit</h2>
+          <div class="confirmation-stack">
+            <label class="checkline">
+              <input type="checkbox" name="authority_accuracy_bundle" required>
+              <span><strong>Rights &amp; accuracy.</strong> I have sufficient rights and permissions to submit this work, and the information supplied is accurate to the best of my knowledge and given in good faith. <b>*</b></span>
+            </label>
+
+            <label class="checkline">
+              <input type="checkbox" name="terms_privacy_processing_bundle" required>
+              <span><strong>Terms, privacy &amp; processing.</strong> I accept the applicable 2027 Terms of Entry, acknowledge the Privacy Notice, authorize the disclosed AI-assisted processing used by the Prize, and understand that no particular provider, model or human-only processing route is guaranteed. <b>*</b></span>
+            </label>
+
+            <label class="checkline final-check">
+              <input type="checkbox" name="review_copy_final_confirm" required>
+              <span><strong>Final review copy.</strong> The attached review copy is the version I intend to have judged. <b>*</b></span>
+            </label>
+          </div>
+        </section>
+<section class="form-actions" aria-labelledby="submission-actions-title">
+          <p class="section-kicker">Submit</p>
+          <h2 id="submission-actions-title">Send your entry</h2>
+          <p class="form-help">Review the information above before submitting. A technical receipt is not the same as formal acknowledgement by the Prize.</p>
+          <div class="action-row">
+            <button class="button gold" id="production-submit" type="submit">Submit entry</button>
+            <button class="button" type="reset">Reset</button>
+          </div>
+          <div id="validation-result" class="validation-result" role="status" aria-live="polite"></div>
+        </section>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer"><div class="container"><div class="footer-note"><span>MIELOGOS Literary Prize · 2027 Founding Cycle</span><span><a href="mailto:prize@mielogos.com">prize@mielogos.com</a></span></div></div></footer>
+
+<script src="/assets/js/site.js"></script>
+<script src="/assets/js/prize-intake-v0-1.js?v=0.1.4"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('prize-intake-form');
+  const result = document.getElementById('validation-result');
+  const submitButton = document.getElementById('production-submit');
+  const review = form.elements.review_file;
+  const cover = form.elements.cover_image;
+  const reviewFileName = document.getElementById('review-file-name');
+  const coverFileName = document.getElementById('cover-file-name');
+  const coverMeta = document.getElementById('cover-file-meta');
+  const synopsis = form.elements.synopsis;
+  const synopsisCount = document.getElementById('synopsis-count');
+
+  const counterFields = [
+    ['translator_information', 'translator-information-count', 1200],
+    ['collaboration_information', 'collaboration-information-count', 1600],
+    ['public_release_reference', 'public-release-reference-count', 1000],
+    ['revised_edition_note', 'revised-edition-count', 1600]
+  ];
+
+  const updateSynopsisCount = () => {
+    synopsisCount.textContent = synopsis.value.length.toLocaleString('en-US') + ' / 2,400 characters';
+  };
+
+  const updateVisibleCounters = () => {
+    counterFields.forEach(([name, id, max]) => {
+      const field = form.elements[name];
+      const counter = document.getElementById(id);
+      if (!field || !counter) return;
+      counter.textContent = field.value.length.toLocaleString('en-US') + ' / ' + max.toLocaleString('en-US') + ' characters';
+    });
+  };
+
+  const updateFileSelectionLabels = () => {
+    reviewFileName.textContent = review.files[0] ? review.files[0].name : 'No file selected';
+    coverFileName.textContent = cover.files[0] ? cover.files[0].name : 'No file selected';
+  };
+
+  synopsis.addEventListener('input', updateSynopsisCount);
+  counterFields.forEach(([name]) => {
+    const field = form.elements[name];
+    if (field) field.addEventListener('input', updateVisibleCounters);
+  });
+  review.addEventListener('change', updateFileSelectionLabels);
+  cover.addEventListener('change', () => {
+    updateFileSelectionLabels();
+    const f = cover.files[0];
+    if (!f) {
+      coverMeta.textContent = 'Optional JPEG, PNG or WebP · maximum file size 2 MB.';
+      return;
+    }
+    const mib = (f.size / (1024 * 1024)).toFixed(2);
+    coverMeta.textContent = f.name + ' · ' + mib + ' MiB · maximum 2 MB';
+  });
+
+  updateSynopsisCount();
+  updateVisibleCounters();
+  updateFileSelectionLabels();
+
+  form.addEventListener('submit', () => {
+    setTimeout(() => {
+      if (!result.classList.contains('pass')) return;
+
+      result.className = 'validation-result pass';
+      result.innerHTML =
+        '<h3>Form validation PASS</h3>' +
+        '<p>The production-form candidate is ready for the final transport connection.</p>' +
+        '<p><strong>No submission was sent from this candidate.</strong></p>';
+      result.scrollIntoView({behavior:'smooth', block:'center'});
+    }, 0);
+  });
+
+  form.addEventListener('reset', () => {
+    setTimeout(() => {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Submit entry';
+      updateSynopsisCount();
+      updateVisibleCounters();
+      updateFileSelectionLabels();
+    }, 0);
+  });
+});
+</script>
+</body>
+</html>
