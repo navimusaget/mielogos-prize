@@ -6,7 +6,7 @@
     "intro": "The first MIELOGOS Literary Prize cycle — from open entry to permanent public recognition.",
     "release_window": "1 January 2024 – 31 December 2026",
     "submission_open": "2027-02-01T00:00:00Z",
-    "submission_close": "2027-05-31T23:59:00Z",
+    "submission_close": "2027-05-31T23:59:59.999Z",
     "eligibility_target": "2027-06-30",
     "reading": "Rolling through August 2027",
     "longlist_date": "2027-09-01",
