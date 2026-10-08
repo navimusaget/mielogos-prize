@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>MIELOGOS 2027 — private prelaunch transport check</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{font:16px/1.55 system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#f6f4ee;color:#1b2929;margin:0;padding:2rem 1rem}main{margin:0 auto;max-width:680px;background:#fff;padding:clamp(18px,5vw,40px);border:1px solid #d8d5cb;border-radius:12px}h1{font-size:1.45rem;margin:.3rem 0 .8rem}p{margin:.5rem 0 1rem}button{font:inherit;cursor:pointer;background:#1d3331;color:white;border:0;border-radius:6px;padding:.8rem 1rem}button:disabled{opacity:.6;cursor:default}.small{font-size:.85rem;color:#475857}.status{margin:1.2rem 0 0;padding:1rem;border-radius:6px;background:#eff1ef;white-space:pre-wrap;overflow-wrap:anywhere}.pass{background:#e9f5eb;color:#143f20}.fail{background:#fff0ed;color:#7f2418}
+</style>
+</head>
+<body>
+<main>
+<p class="small">MIELOGOS Literary Prize 2027 · Private technical diagnostic</p>
+<h1>Prelaunch browser → Google transport</h1>
+<p>This page checks the actual browser connection from <strong>prize.mielogos.org</strong> to the staged RC3 Apps Script. It cannot accept submissions, upload files, create receipts or activate the Prize.</p>
+<p>Expected result: a deliberately denied status lookup, followed by a completed but unreadable (opaque) <em>no-cors</em> POST request. The POST is blocked by RC3 before any submission operation.</p>
+<button id="run" type="button">Run safe connection check</button>
+<div id="status" class="status" role="status" aria-live="polite">Not started. Production intake stays OFF.</div>
+<p class="small">An opaque POST response confirms only browser-level network completion, not successful server execution. This check does not certify a full browser-to-production transaction.</p>
+</main>
+<script>
+(()=>{
+'use strict';
+const ENDPOINT='https://script.google.com/macros/s/AKfycbyowfjAidLyQoZl-Ip2vtBvpZSW1x9tKEmlTIaCZ8lzR7zRWc-QVwQgwr_HZrGdFAKX/exec';
+const run=document.getElementById('run');
+const out=document.getElementById('status');
+const rand=n=>Array.from(crypto.getRandomValues(new Uint8Array(n)),x=>x.toString(16).padStart(2,'0')).join('');
+const display=(message,cls='')=>{out.className='status '+cls;out.textContent=message;};
+function statusJsonpProbe(){
+ return new Promise((resolve,reject)=>{
+  const callback='__MLP27_probe_'+rand(8);
+  const u=new URL(ENDPOINT);
+  u.searchParams.set('action','status');
+  u.searchParams.set('request_id','mlp27_'+rand(16));
+  u.searchParams.set('access_token',rand(32));
+  u.searchParams.set('callback',callback);
+  u.searchParams.set('_',rand(8));
+  const s=document.createElement('script');
+  s.referrerPolicy='no-referrer';
+  let complete=false;
+  const done=(err,result)=>{if(complete)return;complete=true;clearTimeout(timer);s.remove();delete window[callback];err?reject(err):resolve(result);};
+  const timer=setTimeout(()=>done(new Error('JSONP status timed out after 20 s.')),20000);
+  window[callback]=data=>done(null,data);
+  s.onerror=()=>done(new Error('JSONP status script failed to load.'));
+  s.src=u.href;document.head.appendChild(s);
+ });
+}
+run.addEventListener('click',async()=>{
+ run.disabled=true;
+ if(location.protocol!=='https:'||location.hostname!=='prize.mielogos.org'){
+  display('NOT RUN: open this file from https://prize.mielogos.org/ before testing.','fail');return;
+ }
+ try{
+  display('1/2 Checking JSONP status on the real RC3 server…');
+  const response=await statusJsonpProbe();
+  if(response?.ok!==false||response?.error!=='STATUS_NOT_AVAILABLE_PRELAUNCH'){
+   display('HOLD / STATUS CHECK FAILED: unexpected result. No POST attempted.\n'+JSON.stringify({ok:response?.ok,error:response?.error}),'fail');return;
+  }
+  display('1/2 PASS — JSONP reached RC3; prelaunch status is safely denied.\n2/2 Checking blocked no-cors POST transport…');
+  const responsePost=await fetch(ENDPOINT,{
+   method:'POST',mode:'no-cors',credentials:'omit',redirect:'follow',cache:'no-store',
+   headers:{'Content-Type':'text/plain;charset=utf-8'},
+   body:JSON.stringify({action:'transport_probe_noop',request_id:'mlp27_probe_'+rand(8),access_token:rand(32)})
+  });
+  if(responsePost.type!=='opaque'&&responsePost.type!=='opaqueredirect'){
+   display('1/2 PASS — JSONP and prelaunch denial.\n2/2 UNKNOWN — unexpected POST response type: '+responsePost.type,'fail');return;
+  }
+  display('PASS — SAFE BROWSER TRANSPORT\n\nJSONP: real server answered STATUS_NOT_AVAILABLE_PRELAUNCH.\nPOST: no-cors fetch completed with an opaque response; its server body is not readable.\n\nNo upload, receipt, Submission ID, or enabled intake.\nThis does NOT certify real browser transaction processing.','pass');
+ }catch(e){display('CONNECTION CHECK FAILED / INCOMPLETE\n'+String(e&&e.message||e)+'\nNo retry needed; send a screenshot.','fail');}
+});
+})();
+</script>
+</body>
+</html>
