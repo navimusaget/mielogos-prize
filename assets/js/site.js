@@ -401,3 +401,15 @@ const MLP = (() => {
 })();
 
 document.addEventListener('DOMContentLoaded',()=>MLP.initCommon().catch(console.error));
+
+// Cloudflare Web Analytics - independent of MLP initialization.
+(function loadCloudflareAnalytics() {
+  if (document.querySelector('script[data-cf-beacon]')) return;
+  const script = document.createElement('script');
+  script.type = 'module';
+  script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  script.setAttribute('data-cf-beacon', JSON.stringify({
+    token: 'c6b9e403b75749d18648dad39c210ba3'
+  }));
+  document.head.appendChild(script);
+})();
