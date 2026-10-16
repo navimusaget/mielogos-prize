@@ -97,7 +97,11 @@ const MLP = (() => {
     const descEl=document.querySelector('meta[name="description"]');
     const description=descEl?.content || 'The MIELOGOS Literary Prize recognizes outstanding literature created through Symbiotic Authorship.';
     const is404=/page not found/i.test(title);
-    const canonical=`https://prize.mielogos.org${location.pathname}`;
+    // Normalize directory aliases without rewriting standalone .html pages (e.g. the disabled intake form).
+    const requestedPath=location.pathname;
+    const canonicalPath=(requestedPath.endsWith('.html') && !requestedPath.endsWith('/index.html'))
+      ? requestedPath : normalizePath(requestedPath);
+    const canonical=`https://prize.mielogos.org${canonicalPath}`;
     const imageUrl='https://prize.mielogos.org/assets/img/mielogos-prize-seal-primary.png';
 
     if(is404){
