@@ -628,10 +628,12 @@ document.addEventListener('DOMContentLoaded', () => {
       view('Verifying the transaction…');
       if(!state.committed)await postCommand(auth,'commit');
       state=await waitFor(auth,s=>s.committed===true,'Submission receipt');
-      if(!showVerifiedReceipt(state)) throw new Error('A valid SBX27 sandbox receipt was not returned.');
+      if(state?.production_submission!==false || state?.official_receipt!==false || !/^SBX27-\d{6}$/.test(String(state.submission_id||'')))
+        throw new Error('A valid SBX27 sandbox receipt was not returned.');
       await postCommand(auth,'commit');
       const repeated=await waitFor(auth,s=>s.committed===true,'Idempotency check');
       if(repeated.submission_id!==state.submission_id)throw new Error('Repeated COMMIT allocated another ID.');
+      if(!showVerifiedReceipt(state))throw new Error('Sandbox receipt verification failed.');
     } catch(err) {
       view('Submission not confirmed: '+String(err?.message||err)+
         ' Keep the current tab and files selected, then retry. No receipt has been issued unless shown above.','fail');
