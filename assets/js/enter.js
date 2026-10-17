@@ -1,77 +1,81 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const btn = document.getElementById('start-submission');
-  const note = document.getElementById('submission-state-note');
+  'use strict';
+  const online = document.getElementById('online-submit');
+  const email = document.getElementById('email-submit');
+  const compose = document.getElementById('email-compose');
   const box = document.getElementById('final-confirmation');
-  if (!btn) return;
+  const note = document.getElementById('submission-state-note');
+  const emailStatus = document.getElementById('email-route-status');
+  const emailDetails = document.getElementById('email-instructions');
+  if (!online || !email || !compose || !box || !note) return;
 
-  function disable(label, message) {
-    btn.removeAttribute('href');
-    btn.classList.add('disabled');
-    btn.setAttribute('aria-disabled', 'true');
-    btn.textContent = label;
-    if (note) note.textContent = message;
+  const submissionMailbox =
+    'mailto:prize@mielogos.com?subject=MIELOGOS%20Prize%202027%20%E2%80%94%20Email%20Entry';
+
+  function disable(el) {
+    el.removeAttribute('href');
+    el.classList.add('disabled');
+    el.setAttribute('aria-disabled', 'true');
+  }
+  function activate(el, href) {
+    el.setAttribute('href', href);
+    el.classList.remove('disabled');
+    el.removeAttribute('aria-disabled');
   }
 
-  function enable(label, message) {
-    // Navigation only. The destination independently controls both
-    // submission methods and does not accept entries before formal GO.
-    btn.href = '/enter/method/';
-    btn.classList.remove('disabled');
-    btn.removeAttribute('aria-disabled');
-    btn.textContent = label;
-    if (note) note.textContent = message;
-  }
+  // Works without any separate submission-method page. This click merely
+  // reveals the instructions; it does not send applicant data.
+  email.addEventListener('click', () => {
+    if (email.getAttribute('aria-disabled') === 'true') return;
+    if (emailDetails) emailDetails.open = true;
+  });
 
   try {
     const { c, s } = await MLP.initCommon();
-    const openForSubmission =
-      s === 'open' &&
-      String(c.submission_url || '').replace(/\/+$/, '') === '/enter/method';
+    // Dual activation gate: UTC cycle OPEN AND explicit official endpoint
+    // exactly /enter/. The calendar alone cannot open either route.
+    const go = s === 'open' &&
+      String(c.submission_url || '').replace(/\/+$/, '') === '/enter';
 
-    function refresh() {
+    const refresh = () => {
+      disable(online);
+      disable(email);
+      disable(compose);
+
       if (s !== 'preopen' && s !== 'open') {
-        disable(
-          `${c.year} submissions are closed`,
-          'This cycle is no longer accepting entries.'
-        );
-        return;
-      }
-
-      if (box && !box.checked) {
-        disable(
-          s === 'preopen'
-            ? `Opens ${MLP.fmtDate(c.submission_open)}`
-            : 'Confirm eligibility to continue',
-          s === 'preopen'
-            ? 'Tick the confirmation box to preview the two submission methods. No entries are accepted yet.'
-            : 'Tick the confirmation box to continue to the submission-method page.'
-        );
-        return;
-      }
-
-      if (openForSubmission) {
-        enable(
-          'Choose submission method',
-          'Continue to choose the online form or submission by official email.'
-        );
+        note.textContent = 'This cycle is closed. No new entries are accepted.';
+        if (emailStatus) emailStatus.textContent =
+          'These instructions are retained for reference. The submission period has closed.';
+      } else if (!go) {
+        note.textContent = s === 'preopen'
+          ? 'Submissions open ' + MLP.fmtDate(c.submission_open) +
+            ' after official activation. Both routes remain closed.'
+          : 'Submission intake is not yet activated. Both routes remain closed.';
+        if (emailStatus) emailStatus.textContent =
+          'These instructions are provided for information only. The Prize has not opened email intake.';
+      } else if (!box.checked) {
+        note.textContent = 'Check the eligibility confirmation above to choose a submission method.';
+        if (emailStatus) emailStatus.textContent =
+          'Please complete the eligibility confirmation before initiating an email submission.';
       } else {
-        enable(
-          'View submission methods',
-          s === 'preopen'
-            ? `For information only. Entries open ${MLP.fmtDate(c.submission_open)} after the official activation.`
-            : 'Both routes are currently inactive; you may review the instructions.'
-        );
+        activate(online, '/enter/submission-2027.html');
+        activate(email, '#email-instructions');
+        activate(compose, submissionMailbox);
+        note.textContent = 'Choose the online form or the official email route. Both follow the same rules.';
+        if (emailStatus) emailStatus.textContent =
+          'The email route is open. Read these instructions and include every required item.';
       }
-    }
+    };
 
-    if (box) box.addEventListener('change', refresh);
+    box.addEventListener('change', refresh);
     refresh();
   } catch (err) {
-    // Fail closed if the common cycle configuration cannot be verified.
-    disable(
-      'Submission methods unavailable',
-      'Submission status could not be verified. Please try again later.'
-    );
-    console.error('Could not load submission status', err);
+    disable(online);
+    disable(email);
+    disable(compose);
+    note.textContent = 'Submission status cannot be verified. Both routes remain closed.';
+    if (emailStatus) emailStatus.textContent =
+      'Submission status cannot be verified; do not assume email intake is open.';
+    console.error('Failed to initialize Enter submission choices', err);
   }
 });
