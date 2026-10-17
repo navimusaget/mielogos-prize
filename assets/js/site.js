@@ -225,6 +225,31 @@ const MLP = (() => {
     }
   }
 
+  // One shared navigation entry across the static site.
+  // Run before the async site data fetch so the invitation remains visible
+  // even if cycle configuration is temporarily unavailable.
+  function addGetInvolvedLink(){
+    document.querySelectorAll('.primary-nav').forEach(nav=>{
+      if(nav.querySelector('a[href="/get-involved/"]')) return;
+      const a=document.createElement('a');
+      a.href='/get-involved/';
+      a.textContent='Get Involved';
+      const enter=nav.querySelector('.enter-button');
+      if(enter) nav.insertBefore(a,enter);
+      else nav.appendChild(a);
+    });
+    document.querySelectorAll('.footer-col').forEach(col=>{
+      if(col.querySelector('h4')?.textContent.trim()!=='The Prize' ||
+         col.querySelector('a[href="/get-involved/"]')) return;
+      const a=document.createElement('a');
+      a.href='/get-involved/';
+      a.textContent='Get Involved';
+      const partner=col.querySelector('a[href="/partners/"]');
+      if(partner) partner.after(a);
+      else col.appendChild(a);
+    });
+  }
+
   function addPositioningLink(){
     document.querySelectorAll('.footer-col').forEach(col=>{
       const h=col.querySelector('h4');
@@ -400,11 +425,11 @@ const MLP = (() => {
   return {
     get,currentCycle,state,stateLabel,fmtDate,esc,
     recognitionLevels,hasRecognitionLevel,highestRecognitionLevel,
-    initCommon
+    initCommon,addGetInvolvedLink
   };
 })();
 
-document.addEventListener('DOMContentLoaded',()=>MLP.initCommon().catch(console.error));
+document.addEventListener('DOMContentLoaded',()=>{MLP.addGetInvolvedLink();MLP.initCommon().catch(console.error)});
 
 // Cloudflare Web Analytics - independent of MLP initialization.
 (function loadCloudflareAnalytics() {
