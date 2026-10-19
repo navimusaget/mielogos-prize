@@ -67,7 +67,8 @@
       <p class="eyebrow">2027 Founding Cycle</p>
       <h1>2027 submission form</h1>
       <p>Complete the form below to enter the 2027 MIELOGOS Literary Prize. Please check the work, credits and review copy carefully before submitting.</p>
-      <p role="status"><strong>PRE-LAUNCH PREVIEW — submissions are not open.</strong> This form cannot receive applications or files yet.</p>
+      <div role="status" style="padding:18px 22px;margin:18px 0;background:#30271c;color:#ffedc8;border-left:5px solid #c29c50"><strong>PUBLIC DRESS REHEARSAL — TEST ENTRIES ONLY.</strong> The real 2027 MIELOGOS Literary Prize opens on 1 February 2027 UTC. This page currently accepts ONLY synthetic QA data and QA-labeled test files. It does not accept real literary submissions, establish eligibility, or grant official recognition. Do not enter personal information or real manuscripts.</div>
+      <p><button class="button gold" id="qa-fill-example" type="button">Fill synthetic example + attach QA PDF</button> <span style="font-size:.9rem">Then scroll down and submit through the actual site form.</span></p>
 </div>
   </section>
 
@@ -88,7 +89,7 @@
         <p class="muted small">A submission receipt confirms technical receipt only. Formal acknowledgement follows separately.</p>
       </aside>
 
-      <form id="prize-intake-form" class="intake-form" novalidate autocomplete="off">
+      <form id="prize-intake-form" class="intake-form" novalidate autocomplete="off" data-rehearsal="true">
         <section class="form-section" id="contact">
           <p class="section-kicker">01 · Contact</p>
           <h2>Who should we contact?</h2>
@@ -245,7 +246,7 @@
           <h2 id="submission-actions-title">Send your entry</h2>
           <p class="form-help">Review the information above before submitting. A technical receipt is not the same as formal acknowledgement by the Prize.</p>
           <div class="action-row">
-            <button class="button gold" id="production-submit" type="submit">Submit entry</button>
+            <button class="button gold" id="production-submit" type="submit">Submit synthetic QA entry</button>
             <button class="button" type="reset">Reset</button>
           </div>
           <div id="validation-result" class="validation-result" role="status" aria-live="polite"></div>
@@ -335,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('reset', () => {
     setTimeout(() => {
       submitButton.disabled = false;
-      submitButton.textContent = 'Submit entry';
+      submitButton.textContent = 'Submit synthetic QA entry';
       updateSynopsisCount();
       updateVisibleCounters();
       updateFileSelectionLabels();
@@ -355,7 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
 (() => {
   'use strict';
   const CONFIG = Object.freeze({
-    ENABLED: false,
+    ENABLED: true,
+    DRESS_REHEARSAL: true,
     ENDPOINT: 'https://script.google.com/macros/s/AKfycbzgAGUWyijBGPkQRfldpYEqcRpZnWeENz04dKRVXhy5jybhT5-Qkhxl83SF7r7soxtF/exec', // Prize-account RC3 HOLD deployment; this does not authorize submissions.
     CHUNK_BYTES: 256 * 1024,
     STATUS_RETRIES: 16,
@@ -372,6 +374,66 @@ document.addEventListener('DOMContentLoaded', () => {
   const checked = (form, name) => form.elements[name]?.checked === true;
   const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
   const byId = id => document.getElementById(id);
+
+  // Public dress rehearsal: the site never submits a real entrant's identity.
+  function qaBuildPdf(nonce) {
+    const stream='BT /F1 14 Tf 72 720 Td (MIELOGOS QA SITE '+nonce+') Tj ET\n';
+    const parts=[
+      '<</Type/Catalog/Pages 2 0 R>>',
+      '<</Type/Pages/Kids[3 0 R]/Count 1>>',
+      '<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Resources<</Font<</F1 5 0 R>>>>/Contents 4 0 R>>',
+      '<</Length '+stream.length+'>>\nstream\n'+stream+'endstream',
+      '<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>'
+    ];
+    let pdf='%PDF-1.4\n',offsets=[0];
+    parts.forEach((part,i)=>{offsets.push(pdf.length);pdf+=(i+1)+' 0 obj\n'+part+'\nendobj\n';});
+    const xref=pdf.length;
+    pdf+='xref\n0 '+(parts.length+1)+'\n0000000000 65535 f \n';
+    offsets.slice(1).forEach(p=>pdf+=String(p).padStart(10,'0')+' 00000 n \n');
+    pdf+='trailer\n<</Size '+(parts.length+1)+'/Root 1 0 R>>\nstartxref\n'+xref+'\n%%EOF\n';
+    return new File([pdf],'QA_Site_Rehearsal_'+nonce+'.pdf',{type:'application/pdf'});
+  }
+
+  function qaFillExample() {
+    const f=byId('prize-intake-form');
+    if(readPending()){
+      view('A previous QA submission is pending. Recover it before starting a new test.','fail');
+      return;
+    }
+    const nonce=randomHex(4),name='QA Synthetic Author '+nonce;
+    const input=(field,value)=>{
+      const el=f.elements[field];if(!el)throw new Error('Missing form field: '+field);
+      el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    };
+    try{
+      input('administrative_contact_name','QA Rehearsal '+nonce);
+      input('contact_email','qa-'+nonce+'@example.invalid');
+      input('submitter_role','AUTHOR');
+      input('work_title','[QA TEST ONLY] Site Entry '+nonce);
+      input('category','FICTION');
+      input('original_language','English');
+      input('controlling_public_release_date_or_year','2026');
+      input('publishing_route_or_venue','[QA TEST ONLY] Public rehearsal');
+      input('public_release_reference','https://example.invalid/'+nonce);
+      input('symbiotic_declaration','[QA TEST ONLY] A synthetic interaction between a fictional human author and an imagined artificial collaborator changed the invented review copy.');
+      input('synopsis','[QA TEST ONLY] Fictional manuscript created solely for validating the public form, uploads, register and evaluation workflow.');
+      const author=f.querySelector('[data-author-card]');
+      if(!author)throw new Error('Author field is not ready. Reload this page.');
+      author.querySelector('[data-author-field="credited_name"]').value=name;
+      author.querySelector('[data-author-field="public_credit_name"]').value=name;
+      author.querySelector('[data-author-field="age_18plus_confirmed"]').checked=true;
+      ['synopsis_publicity_authority','authority_accuracy_bundle','terms_privacy_processing_bundle','review_copy_final_confirm'].forEach(key=>{
+        f.elements[key].checked=true;f.elements[key].dispatchEvent(new Event('change',{bubbles:true}));
+      });
+      const pdf=qaBuildPdf(nonce);
+      const dt=new DataTransfer();
+      dt.items.add(pdf);
+      byId('review-file').files=dt.files;
+      byId('review-file').dispatchEvent(new Event('change',{bubbles:true}));
+      view('Synthetic example '+nonce+' filled and QA PDF selected. Review and submit at the bottom. This is NOT a real competition entry.','pass');
+    }catch(err){view('QA autofill could not complete: '+String(err.message||err),'fail');}
+  }
 
   // Access token remains in sessionStorage only, never in URL except the authenticated
   // status JSONP request. Do not store this token in persistent browser storage.
@@ -417,6 +479,13 @@ document.addEventListener('DOMContentLoaded', () => {
       form.reportValidity();
       throw new Error('Please complete all required fields and confirmations.');
     }
+    if(CONFIG.DRESS_REHEARSAL) {
+      if(!/^QA[ _-]/i.test(getValue(form,'administrative_contact_name')) ||
+         !/@example\.invalid$/i.test(getValue(form,'contact_email')) ||
+         !/^\[QA TEST ONLY\]/i.test(getValue(form,'work_title')) ||
+         !/^https:\/\/example\.invalid\//i.test(getValue(form,'public_release_reference')))
+        throw new Error('TEST MODE ONLY: use the synthetic example button; real personal details and real works cannot be submitted.');
+    }
     const authors = [...form.querySelectorAll('[data-author-card]')];
     if (authors.length < 1 || authors.length > 20) throw new Error('Between 1 and 20 credited authors are required.');
     const yr = /^(202[4-6])(?:-\d\d-\d\d)?$/.exec(getValue(form,'controlling_public_release_date_or_year'));
@@ -425,6 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const review=byId('review-file')?.files?.[0];
     const cover=byId('cover-image')?.files?.[0] || null;
     if (!review || !/\.(epub|pdf|docx)$/i.test(review.name)) throw new Error('Review file must be EPUB, PDF or DOCX.');
+    if(CONFIG.DRESS_REHEARSAL && (!/^QA[_ -]/i.test(review.name) || (cover && !/^QA[_ -]/i.test(cover.name))))
+      throw new Error('TEST MODE ONLY: manuscripts and covers must be QA-labeled test files. Do not upload real literary works.');
     const graphic=getValue(form,'category')==='GRAPHIC_HYBRID_EXPERIMENTAL';
     if (review.size < 1 || review.size > (graphic?50:10)*MiB) throw new Error('Review file exceeds its category size limit.');
     if (cover) {
@@ -567,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const button=byId('production-submit');
     if(button)button.disabled=true;
     view('Technical receipt: '+st.submission_id+' (UTC '+st.receipt_at_utc+'). '+
-      'Keep this number. This is NOT the official acknowledgement and does not lock your review copy.','pass');
+      'QA TEST ONLY. This is a rehearsal record, not an official entry or acknowledgement.','pass');
     return true;
   }
 
@@ -633,6 +704,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if(button && !finished)button.disabled=false;
     }
   }
+
+  byId('qa-fill-example').addEventListener('click',qaFillExample);
 
   document.addEventListener('submit',e=>{
     if(e.target?.id!=='prize-intake-form') return;
