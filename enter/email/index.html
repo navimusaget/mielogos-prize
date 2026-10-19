@@ -28,7 +28,7 @@
 <p><a href="/enter/">← Back to both submission options</a></p>
 </div></section>
 <section class="section"><div class="container email-shell">
-<div id="email-route-status" class="email-route-status" role="status" aria-live="polite"><strong>Email submissions are not open.</strong><p>These instructions are available for reference only.</p></div>
+<div id="email-route-status" class="email-route-status" role="status" aria-live="polite"><strong>PUBLIC DRESS REHEARSAL — EMAIL TEST ROUTE.</strong><p>Only synthetic messages with [QA TEST ONLY] subjects, fake author details and example.invalid contacts. The official 2027 cycle opens on 1 February 2027. Do not email real entries or real manuscripts.</p></div>
 <section class="method-instructions" aria-labelledby="email-heading">
       <p class="eyebrow">Email submission · Instructions</p>
       <h2 id="email-heading">How to submit by email</h2>
@@ -66,30 +66,28 @@
       <p>Before sending, read the <a href="/eligibility/">Eligibility</a>, <a href="/entrant-guide/">Entrant Guide</a>, <a href="/terms/">Terms of Entry</a> and <a href="/privacy/">Privacy Notice</a>. Email submission is an authorized entry route only after MIELOGOS formally activates it during the applicable submission period.</p>
     </section>
 <div class="email-compose-box">
-<h3>Ready to send your entry?</h3>
+<h3>Try the synthetic email submission route</h3>
 <p>Include the completed entry details and the final review copy. Verify that all attachments are included before sending to the official Prize mailbox.</p>
-<a class="button gold disabled" id="email-compose" aria-disabled="true">Compose email entry</a>
+<a class="button gold disabled" id="email-compose" aria-disabled="true">Compose synthetic QA email</a>
 <p>A technical receipt confirms only delivery of specified materials. Formal acknowledgement of the competition version follows administrative verification.</p>
 </div>
 <p class="email-back"><a href="/enter/">← Return to submission methods</a></p>
-</div></section></main><footer class="site-footer"><div class="container"><div class="footer-grid"><div><div class="footer-brand">MIELOGOS Literary Prize</div><p>Literary recognition for outstanding work created through Symbiotic Authorship.</p><p><a data-contact href="mailto:prize@mielogos.com">prize@mielogos.com</a></p></div><div class="footer-col"><h4>The Prize</h4><a href="/prize/">About</a><a href="/symbiotic-authorship/">Symbiotic Authorship</a><a href="/categories/">Categories</a><a href="/judging/">Judging</a><a href="/partners/">Partners &amp; Supporters</a></div><div class="footer-col"><h4>Current cycle</h4><a data-current-cycle-link href="/prize-years/2027/"><span data-current-year>2027</span> <span data-cycle-name>Founding Cycle</span></a><a href="/eligibility/">Eligibility</a><a href="/timeline/">Timeline</a><a href="/enter/">Enter</a></div><div class="footer-col"><h4>Documents & archive</h4><a href="/entrant-guide/">Entrant Guide</a><a href="/terms/">Terms of Entry</a><a href="/privacy/">Privacy</a><a href="/prize-years/">Prize Years</a><a href="/verify/">Verify Recognition</a></div></div><div class="footer-note"><span>Founded and governed within MIELOGOS · Institutionally supported by FFRI-NM · Founding Cycle operated by Navi Musaget</span><span>© <span id="copyright-year"></span> MIELOGOS</span></div></div></footer><script>document.getElementById('copyright-year').textContent=new Date().getUTCFullYear()</script><script src="/assets/js/site.js"></script><script src="/assets/js/enter.js?v=20261017-merged-routes"></script></body></html
-<script src="/assets/js/site.js"></script>
+</div></section></main><footer class="site-footer"><div class="container"><div class="footer-grid"><div><div class="footer-brand">MIELOGOS Literary Prize</div><p>Literary recognition for outstanding work created through Symbiotic Authorship.</p><p><a data-contact href="mailto:prize@mielogos.com">prize@mielogos.com</a></p></div><div class="footer-col"><h4>The Prize</h4><a href="/prize/">About</a><a href="/symbiotic-authorship/">Symbiotic Authorship</a><a href="/categories/">Categories</a><a href="/judging/">Judging</a><a href="/partners/">Partners &amp; Supporters</a></div><div class="footer-col"><h4>Current cycle</h4><a data-current-cycle-link href="/prize-years/2027/"><span data-current-year>2027</span> <span data-cycle-name>Founding Cycle</span></a><a href="/eligibility/">Eligibility</a><a href="/timeline/">Timeline</a><a href="/enter/">Enter</a></div><div class="footer-col"><h4>Documents & archive</h4><a href="/entrant-guide/">Entrant Guide</a><a href="/terms/">Terms of Entry</a><a href="/privacy/">Privacy</a><a href="/prize-years/">Prize Years</a><a href="/verify/">Verify Recognition</a></div></div><div class="footer-note"><span>Founded and governed within MIELOGOS · Institutionally supported by FFRI-NM · Founding Cycle operated by Navi Musaget</span><span>© <span id="copyright-year"></span> MIELOGOS</span></div></div></footer><script>document.getElementById('copyright-year').textContent=new Date().getUTCFullYear()</script><script src="/assets/js/site.js"></script><script src="/assets/js/enter.js?v=20261017-merged-routes"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   const compose = document.getElementById('email-compose');
   const status = document.getElementById('email-route-status');
   if (!compose || !status) return;
   try {
-    const {c,s} = await MLP.initCommon();
-    // The page is public for reference. Email submission is authorized
-    // only by BOTH an open UTC cycle and an explicit /enter/ release URL.
-    const allowed = s === 'open' &&
-      String(c.submission_url || '').replace(/\/+$/, '') === '/enter';
+    // Explicit TESTING mode: mailbox is an operator-driven route, not an
+    // automated official acknowledgement. Keep all test data synthetic.
+    const allowed = true;
     if (allowed) {
-      compose.href = 'mailto:prize@mielogos.com?subject=MIELOGOS%20Prize%202027%20%E2%80%94%20Email%20Entry';
+      compose.href = 'mailto:prize@mielogos.com?subject=%5BQA%20TEST%20ONLY%5D%20MLP27%20Email%20Rehearsal&body=%5BQA%20TEST%20ONLY%5D%0AContact%3A%20QA%20Sample%20Author%0AReply%20address%3A%20qa%40example.invalid%0AWork%3A%20%5BQA%20TEST%20ONLY%5D%20Synthetic%20Work%0A%0APlease%20attach%20only%20a%20fictitious%20QA%20manuscript%20and%20the%20test%20entry%20details.';
       compose.classList.remove('disabled');
       compose.removeAttribute('aria-disabled');
-      status.innerHTML = '<strong>Email submission is open.</strong><p>Read the requirements below before sending. A sent email does not itself establish successful receipt or eligibility.</p>';
+      status.innerHTML = '<strong>PUBLIC DRESS REHEARSAL — EMAIL TEST OPEN.</strong><p>Only fake author details and QA files. Email registration is recorded manually by the operator. No real submissions are accepted before February 2027.</p>';
     } else {
       status.innerHTML = '<strong>Email submission is not currently open.</strong><p>The instructions below are for advance reference. Do not send an entry before the Prize formally activates this route.</p>';
     }
