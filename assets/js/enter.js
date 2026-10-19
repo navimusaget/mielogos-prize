@@ -5,6 +5,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   const box = document.getElementById('final-confirmation');
   const note = document.getElementById('submission-state-note');
   if (!online || !email || !box || !note) return;
+  // Explicit dress rehearsal: both public entry methods lead to TEST-ONLY
+  // forms. Official calendar and submission-go configuration are unchanged.
+  const DRESS_REHEARSAL = true;
+  if (DRESS_REHEARSAL) {
+    const state=document.querySelector('[data-cycle-state]');
+    if(state)state.textContent='DRESS REHEARSAL — TEST ONLY';
+    function refreshQA(){
+      online.removeAttribute('href');email.removeAttribute('href');
+      online.classList.add('disabled');email.classList.add('disabled');
+      online.setAttribute('aria-disabled','true');email.setAttribute('aria-disabled','true');
+      if(!box.checked){
+        note.textContent='Confirm eligibility review to open the synthetic test methods. No official applications are accepted.';
+        return;
+      }
+      online.href='/enter/submission-2027.html';email.href='/enter/email/';
+      online.classList.remove('disabled');email.classList.remove('disabled');
+      online.removeAttribute('aria-disabled');email.removeAttribute('aria-disabled');
+      note.textContent='TEST MODE: choose online or email. Only fictional entries and QA-labeled files may be used.';
+    }
+    box.addEventListener('change',refreshQA);
+    refreshQA();
+    return;
+  }
+
 
   function disable(el) {
     el.removeAttribute('href');
