@@ -63,3 +63,10 @@ h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-.025em;line-he
 
 /* v0.6: responsive editorial picture sources */
 .editorial-visual picture{display:block;width:100%}
+
+/* Reception correspondence: secondary contact, without replacing the official Prize address. */
+.site-footer .footer-reception{font-size:13px;line-height:1.55;color:#d8d1c6;overflow-wrap:anywhere;margin-top:10px}
+.site-footer .footer-reception a{color:#e8e3da;text-underline-offset:3px}
+.reception-contact{border-top:1px solid var(--rule);margin-top:30px;padding-top:24px}
+.reception-contact .lede{font-size:clamp(22px,3vw,29px);overflow-wrap:anywhere;margin:8px 0 12px}
+.reception-contact>p:last-child{font-size:15px;color:var(--muted)}
