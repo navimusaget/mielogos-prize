@@ -250,6 +250,30 @@ const MLP = (() => {
     });
   }
 
+  // Make the already-published Contact page discoverable on desktop and mobile.
+  // Idempotent, independent of remote cycle configuration.
+  function addContactLinks(){
+    document.querySelectorAll('.primary-nav').forEach(nav=>{
+      if(nav.querySelector('a[href="/contact/"]')) return;
+      const a=document.createElement('a');
+      a.href='/contact/';
+      a.textContent='Contact';
+      const enter=nav.querySelector('.enter-button');
+      if(enter) nav.insertBefore(a,enter);
+      else nav.appendChild(a);
+    });
+    document.querySelectorAll('.footer-col').forEach(col=>{
+      if(col.querySelector('h4')?.textContent.trim()!=='The Prize' ||
+         col.querySelector('a[href="/contact/"]')) return;
+      const a=document.createElement('a');
+      a.href='/contact/';
+      a.textContent='Contact';
+      const last=col.querySelector('a[href="/get-involved/"]') || col.querySelector('a[href="/partners/"]');
+      if(last) last.after(a);
+      else col.appendChild(a);
+    });
+  }
+
   function addPositioningLink(){
     document.querySelectorAll('.footer-col').forEach(col=>{
       const h=col.querySelector('h4');
@@ -425,11 +449,11 @@ const MLP = (() => {
   return {
     get,currentCycle,state,stateLabel,fmtDate,esc,
     recognitionLevels,hasRecognitionLevel,highestRecognitionLevel,
-    initCommon,addGetInvolvedLink
+    initCommon,addGetInvolvedLink,addContactLinks
   };
 })();
 
-document.addEventListener('DOMContentLoaded',()=>{MLP.addGetInvolvedLink();MLP.initCommon().catch(console.error)});
+document.addEventListener('DOMContentLoaded',()=>{MLP.addGetInvolvedLink();MLP.addContactLinks();MLP.initCommon().catch(console.error)});
 
 // Cloudflare Web Analytics - independent of MLP initialization.
 (function loadCloudflareAnalytics() {
